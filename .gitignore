@@ -1,0 +1,10 @@
+# Task logs (may contain sensitive prompts)
+task_log.jsonl
+*.jsonl
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
