@@ -28,7 +28,8 @@ from mcp.server.stdio import stdio_server
 from mcp import types
 
 OLLAMA_HOST = "http://10.22.11.11:11434"
-DEFAULT_MODEL = "qwen2.5:14b"
+#DEFAULT_MODEL = "qwen2.5:14b"
+DEFAUTT_MODEL = "qwen3-coder:latest"
 LOG_FILE = Path(__file__).parent / "task_log.jsonl"
 
 app = Server("ollama-qwen")
