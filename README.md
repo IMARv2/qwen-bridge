@@ -1,44 +1,51 @@
 # 🤖 Qwen Bridge: Claude + Local LLM Orchestration
 
+![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white)
+![MCP](https://img.shields.io/badge/MCP-Compatible-blueviolet?style=flat-square)
+![Ollama](https://img.shields.io/badge/Ollama-Powered-black?style=flat-square)
+![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
+
 > [!NOTE]
-> **PURPOSE:** A lightweight MCP (Model Context Protocol) server that connects Claude Code to a local Ollama instance — enabling a hybrid AI workflow where complex tasks are delegated to local models to conserve Anthropic API credits.
+> **PURPOSE:** A lightweight MCP (Model Context Protocol) server that connects Claude Code to a local Ollama instance — enabling a hybrid AI workflow where complex tasks are delegated to locally-hosted models to reduce cloud inference costs.
 
 ---
 
-## 01 - Project Overview
+## 01 — 📖 Project Overview
 
-**Qwen Bridge** acts as a transparent relay between Claude Code and a local Ollama server running on the homelab network. It exposes an MCP tool (`ask_qwen`) that Claude can call to delegate code generation, text analysis, and reasoning tasks to locally-hosted models — avoiding unnecessary API credit consumption for repetitive or bulk tasks.
+**Qwen Bridge** acts as a transparent relay between Claude Code and a local Ollama server. It exposes MCP tools (`ask_qwen`, `list_qwen_models`, `qwen_task_log`) that Claude can call to delegate code generation, text analysis, and reasoning tasks to locally-hosted models — reducing reliance on cloud APIs for repetitive or bulk tasks.
 
 The bridge also maintains a persistent task log for auditing delegated tasks and their outputs.
 
 ---
 
-## 02 - Key Features
+## 02 — ✨ Key Features
 
-* **MCP Tool Server:** Exposes `ask_qwen`, `list_qwen_models`, and `qwen_task_log` as MCP tools consumable by Claude Code.
-* **Multi-Model Routing:** Supports model selection per task type — code, text, reasoning, multimodal.
-* **Task Logging:** Persists all delegated tasks with timestamps, model used, and response to a JSONL log.
-* **Async HTTP:** Non-blocking requests to the Ollama API for fast response streaming.
-* **Transparent Fallback:** Returns `[QWEN_OFFLINE]` prefix when the Ollama server is unreachable, allowing Claude to handle the task itself.
+| Feature | Description |
+| :--- | :--- |
+| 🔌 **MCP Tool Server** | Exposes `ask_qwen`, `list_qwen_models`, and `qwen_task_log` as MCP tools |
+| 🔀 **Multi-Model Routing** | Select the optimal model per task type — code, text, reasoning, multimodal |
+| 📝 **Task Logging** | Persists all delegated tasks with timestamps, model used, and response to a JSONL log |
+| ⚡ **Async HTTP** | Non-blocking requests to the Ollama API for fast response streaming |
+| 🔁 **Transparent Fallback** | Returns `[QWEN_OFFLINE]` prefix when the server is unreachable |
 
 ---
 
-## 03 - Available Models (Benchmarked)
+## 03 — 🧠 Available Models (Benchmarked)
 
 | Model | Size | Best For | Speed |
-| :--- | :--- | :--- | :--- |
-| `qwen2.5-coder:14b` | 9GB | Code, JS, Python, configs | ~28s ✅ |
-| `qwen2.5:14b` | 9GB | Text, docs, summaries | ~20s ✅ |
-| `deepseek-r1:14b` | 9GB | Reasoning, multi-step analysis | ~15-25s ✅ |
-| `gemma4:e4b` | 9.6GB | Image / screenshot analysis | ~47s |
-| `qwen3-coder:latest` | 18.6GB | High-accuracy code (slower) | ~53s |
+| :--- | :---: | :--- | :---: |
+| `qwen2.5-coder:14b` | 9 GB | Code, JS, Python, configs | ~28s ✅ |
+| `qwen2.5:14b` | 9 GB | Text, docs, summaries | ~20s ✅ |
+| `deepseek-r1:14b` | 9 GB | Reasoning, multi-step analysis | ~15–25s ✅ |
+| `gemma4:e4b` | 9.6 GB | Image / screenshot analysis | ~47s |
+| `qwen3-coder:latest` | 18.6 GB | High-accuracy code (slower) | ~53s |
 
 > [!TIP]
-> `qwen2.5-coder:14b` is the default recommendation for code tasks — it fits fully in VRAM (RTX 3060 12GB) and delivers the best speed/accuracy ratio.
+> `qwen2.5-coder:14b` is the recommended default for code tasks — it fits fully within your GPU's VRAM and delivers the best speed/accuracy ratio for most workloads.
 
 ---
 
-## 04 - Project Structure
+## 04 — 📁 Project Structure
 
 ```
 qwen-bridge/
@@ -48,36 +55,36 @@ qwen-bridge/
 
 ---
 
-## 05 - Setup
+## 05 — 🚀 Setup
 
 > [!IMPORTANT]
 > **Prerequisites:** A running [Ollama](https://ollama.ai) instance accessible on your network, and Claude Code with MCP support.
 
-1. **Configure the Ollama host** in `qwen_bridge.py`:
-   ```python
-   OLLAMA_HOST = "http://10.22.11.11:11434"
-   ```
+**1. Configure the Ollama host** in `qwen_bridge.py`:
+```python
+OLLAMA_HOST = "http://YOUR_OLLAMA_HOST:11434"
+```
 
-2. **Register the MCP server** in your Claude Code config (`~/.claude/settings.json`):
-   ```json
-   {
-     "mcpServers": {
-       "ollama": {
-         "command": "python3",
-         "args": ["/path/to/qwen-bridge/mcp_server.py"]
-       }
-     }
-   }
-   ```
+**2. Register the MCP server** in your Claude Code config (`~/.claude/settings.json`):
+```json
+{
+  "mcpServers": {
+    "ollama": {
+      "command": "python3",
+      "args": ["/path/to/qwen-bridge/mcp_server.py"]
+    }
+  }
+}
+```
 
-3. **Claude can now delegate tasks:**
-   ```
-   ask_qwen(model="qwen2.5-coder:14b", prompt="Write a Python function that...")
-   ```
+**3. Claude can now delegate tasks:**
+```
+ask_qwen(model="qwen2.5-coder:14b", prompt="Write a Python function that...")
+```
 
 ---
 
-## 06 - MCP Tools Reference
+## 06 — 🛠️ MCP Tools Reference
 
 | Tool | Description |
 | :--- | :--- |
@@ -87,14 +94,14 @@ qwen-bridge/
 
 ---
 
-## 07 - Workflow Pattern
+## 07 — 🔄 Recommended Workflow
 
 > [!NOTE]
-> The recommended hybrid workflow for Claude Code + Qwen Bridge:
+> The hybrid workflow that gets the best results from Qwen Bridge:
 
-1. **Claude** plans the architecture and reviews existing code for context.
-2. **Qwen Bridge** generates boilerplate, CRUD code, templates, or documentation.
-3. **Claude** reviews the output, corrects field names, and writes the final result to disk.
+1. **Plan** — Use Claude (or your preferred LLM) to design the architecture and gather full context from existing files.
+2. **Generate** — Delegate boilerplate, CRUD code, templates, or documentation to Qwen Bridge.
+3. **Review** — Verify field names, imports, and logic against your actual codebase before committing.
 
 > [!CAUTION]
-> Do not ask Qwen to generate code that references existing project files without providing full file content. Without context, local models will hallucinate field names, imports, and class structures.
+> Do not ask the local model to generate code that references existing project files without providing their full content in the prompt. Without context, local models will hallucinate field names, imports, and class structures.
