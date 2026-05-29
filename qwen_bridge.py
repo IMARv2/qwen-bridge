@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
 """
-Qwen Bridge — delegates tasks from Claude to local Ollama (10.22.11.11)
+Qwen Bridge — delegates tasks from Claude to local Ollama instance.
 Usage:
   python3 qwen_bridge.py "your prompt here"
   python3 qwen_bridge.py "your prompt" --model qwen2.5:14b
   python3 qwen_bridge.py "your prompt" --system "you are a coding assistant"
   cat file.py | python3 qwen_bridge.py "review this code" --stdin
+
+Set OLLAMA_HOST env var to point to your Ollama instance (default: http://localhost:11434).
 """
 
 import argparse
 import json
+import os
 import sys
 import time
 import urllib.request
@@ -17,7 +20,7 @@ import urllib.error
 from datetime import datetime
 from pathlib import Path
 
-OLLAMA_HOST = "http://10.22.11.11:11434"
+OLLAMA_HOST = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
 DEFAULT_MODEL = "qwen2.5:14b"
 LOG_FILE = Path(__file__).parent / "task_log.jsonl"
 

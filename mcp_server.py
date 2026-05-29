@@ -17,6 +17,7 @@ Configure in ~/.claude/settings.json:
 """
 
 import json
+import os
 import time
 import urllib.request
 import urllib.error
@@ -27,9 +28,8 @@ from mcp.server import Server
 from mcp.server.stdio import stdio_server
 from mcp import types
 
-OLLAMA_HOST = "http://10.22.11.11:11434"
-#DEFAULT_MODEL = "qwen2.5:14b"
-DEFAUTT_MODEL = "qwen3-coder:latest"
+OLLAMA_HOST = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
+DEFAULT_MODEL = os.environ.get("OLLAMA_DEFAULT_MODEL", "qwen2.5:14b")
 LOG_FILE = Path(__file__).parent / "task_log.jsonl"
 
 app = Server("ollama-qwen")
@@ -82,7 +82,7 @@ async def list_tools() -> list[types.Tool]:
         types.Tool(
             name="ask_qwen",
             description=(
-                "Delegate a task to the local Qwen LLM (running on 10.22.11.11 via Ollama). "
+                "Delegate a task to the local Qwen LLM (running via Ollama). "
                 "Use this for code generation, boilerplate, documentation, refactoring suggestions, "
                 "and other tasks that don't require Claude's full capabilities — to conserve API credits. "
                 "Returns the model's response as text. "
@@ -112,7 +112,7 @@ async def list_tools() -> list[types.Tool]:
         ),
         types.Tool(
             name="list_qwen_models",
-            description="List all available models on the local Ollama instance (10.22.11.11). Shows model names, sizes, and parameter counts.",
+            description="List all available models on the local Ollama instance. Shows model names, sizes, and parameter counts.",
             inputSchema={
                 "type": "object",
                 "properties": {}
@@ -147,7 +147,7 @@ async def call_tool(name: str, arguments: dict) -> list[types.TextContent]:
         # Quick ping before sending heavy request
         if not _ollama_ping():
             return [types.TextContent(type="text", text=(
-                "[QWEN_OFFLINE] The second machine (10.22.11.11) is not reachable. "
+                "[QWEN_OFFLINE] The Ollama host is not reachable. "
                 "Ollama is down — either the machine is powered off or the service has stopped. "
                 "Please handle this task yourself."
             ))]
@@ -180,7 +180,7 @@ async def call_tool(name: str, arguments: dict) -> list[types.TextContent]:
             models = data.get("models", [])
             if not models:
                 return [types.TextContent(type="text", text="No models found on Ollama.")]
-            lines = ["Available models on 10.22.11.11:\n"]
+            lines = [f"Available models on {OLLAMA_HOST}:\n"]
             for m in models:
                 size_gb = m["size"] / 1e9
                 lines.append(f"  • {m['name']:30s}  {size_gb:.1f} GB  ({m['details']['parameter_size']})")
