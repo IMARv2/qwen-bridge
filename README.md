@@ -32,16 +32,16 @@ The bridge also maintains a persistent task log for auditing delegated tasks and
 
 ## 03 — 🧠 Available Models (Benchmarked)
 
-| Model | Size | Best For | Speed |
+| Model | Size | Best For | Relative Speed |
 | :--- | :---: | :--- | :---: |
-| `qwen2.5-coder:14b` | 9 GB | Code, JS, Python, configs | ~28s ✅ |
-| `qwen2.5:14b` | 9 GB | Text, docs, summaries | ~20s ✅ |
-| `deepseek-r1:14b` | 9 GB | Reasoning, multi-step analysis | ~15–25s ✅ |
-| `gemma4:e4b` | 9.6 GB | Image / screenshot analysis | ~47s |
-| `qwen3-coder:latest` | 18.6 GB | High-accuracy code (slower) | ~53s |
+| `qwen2.5-coder:14b` | 9 GB | Code, JS, Python, configs | Fast ✅ |
+| `qwen2.5:14b` | 9 GB | Text, docs, summaries | Fast ✅ |
+| `deepseek-r1:14b` | 9 GB | Reasoning, multi-step analysis | Fast ✅ |
+| `gemma4:e4b` | 9.6 GB | Image / screenshot analysis | Medium |
+| `qwen3-coder:latest` | 18.6 GB | High-accuracy code | Slow (CPU offload on most consumer GPUs) |
 
 > [!TIP]
-> `qwen2.5-coder:14b` is the recommended default for code tasks — it fits fully within your GPU's VRAM and delivers the best speed/accuracy ratio for most workloads.
+> `qwen2.5-coder:14b` is the recommended default for code tasks — at 9 GB it runs fully on-GPU for most consumer hardware, delivering the best speed/accuracy ratio for everyday workloads.
 
 ---
 
